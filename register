@@ -1,0 +1,42 @@
+<?php
+session_start();
+require_once "db.php";
+
+
+if (!isset($_POST['username']) || !isset($_POST['password'])) {
+    die("الرجاء إدخال اسم المستخدم وكلمة المرور.");
+}
+
+$username = trim($_POST['username']);
+$password = trim($_POST['password']);
+
+if ($username === "" || $password === "") {
+    die("لا يمكن ترك الحقول فارغة.");
+}
+
+$conn = connectDB();
+
+// تحقق من وجود اسم المستخدم مسبقًا
+$stmt = $conn->prepare("SELECT id FROM users WHERE username = ?");
+$stmt->bind_param("s", $username);
+$stmt->execute();
+$result = $stmt->get_result();
+
+if ($result->num_rows > 0) {
+    die("اسم المستخدم موجود بالفعل. <a href='login.php'>العودة</a>");
+}
+
+// تشفير كلمة المرور 
+$hashed_password = password_hash($password, PASSWORD_DEFAULT);
+
+// إضافة المستخدم
+$insert = $conn->prepare("INSERT INTO users (username, password) VALUES (?, ?)");
+$insert->bind_param("ss", $username, $hashed_password);
+
+if ($insert->execute()) {
+    $_SESSION['username'] = $username;
+    header("Location: dashboard.php"); // عرض صفحة الترحيب مباشرة بعد التسجيل
+    exit();
+} else {
+    die("حدث خطأ أثناء التسجيل: " . $conn->error);
+}
