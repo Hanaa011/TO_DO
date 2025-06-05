@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>To Do List</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #b34bf4, #b67afc);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .container {
+      background: white;
+      border-radius: 20px;
+      width: 400px;
+      padding: 30px;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+      position: relative;
+    }
+
+    .date {
+      text-align: center;
+      color: #8f44fd;
+      font-size: 1rem;
+      margin-bottom: 15px;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      font-weight: normal;
+      font-size: 1.5rem;
+    }
+
+    ul {
+      list-style-type: none;
+      padding: 0;
+      max-height: 250px;
+      overflow-y: auto;
+    }
+
+    li {
+      display: flex;
+      align-items: center;
+      margin-bottom: 12px;
+      font-size: 1.05rem;
+    }
+
+    li.subtask {
+      padding-left: 25px;
+      font-style: italic;
+    }
+
+    li.completed span {
+      text-decoration: line-through;
+      color: gray;
+    }
+
+    input[type="checkbox"] {
+      margin-right: 12px;
+      accent-color: #8f44fd;
+      transform: scale(1.2);
+    }
+
+    .add-task {
+      text-align: center;
+      color: #aaa;
+      font-size: 0.9rem;
+      margin-top: 20px;
+      cursor: pointer;
+    }
+
+    .fab {
+      width: 50px;
+      height: 50px;
+      background-color: #8f44fd;
+      border-radius: 50%;
+      position: absolute;
+      bottom: -30px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      font-size: 2rem;
+      box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+    }
+
+    .input-container {
+      display: flex;
+      margin-top: 15px;
+      justify-content: center;
+    }
+
+    #new-task {
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      padding: 8px;
+      width: 75%;
+      margin-right: 8px;
+      font-size: 1rem;
+    }
+
+    #add-btn {
+      background-color: #8f44fd;
+      border: none;
+      color: white;
+      padding: 8px 12px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1.1rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="date" id="current-date"></div>
+    <h2>To do List</h2>
+    <ul id="task-list">
+      <li class="completed"><input type="checkbox" checked /><span>Complete assignments</span></li>
+      <li><input type="checkbox" /><span>Cook dinner</span></li>
+      <li class="subtask"><input type="checkbox" /><span>Buy groceries</span></li>
+      <li class="subtask"><input type="checkbox" /><span>Prepare recipe</span></li>
+      <li><input type="checkbox" /><span>Meet nora</span></li>
+    </ul>
+
+    <div class="input-container">
+      <input type="text" id="new-task" placeholder="add task ..." />
+      <button id="add-btn">+</button>
+    </div>
+  </div>
+
+  <script>
+    const taskList = document.getElementById('task-list');
+    const newTaskInput = document.getElementById('new-task');
+    const addBtn = document.getElementById('add-btn');
+
+    // Set today's date
+    const dateElement = document.getElementById('current-date');
+    const today = new Date();
+    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    dateElement.textContent = today.toLocaleDateString('en-GB', options);
+
+    function createTaskElement(text) {
+      const li = document.createElement('li');
+      const checkbox = document.createElement('input');
+      checkbox.type = 'checkbox';
+      const span = document.createElement('span');
+      span.textContent = text;
+
+      checkbox.addEventListener('change', () => {
+        li.classList.toggle('completed', checkbox.checked);
+      });
+
+      li.appendChild(checkbox);
+      li.appendChild(span);
+      return li;
+    }
+
+    addBtn.addEventListener('click', () => {
+      const taskText = newTaskInput.value.trim();
+      if (taskText) {
+        const taskElement = createTaskElement(taskText);
+        taskList.appendChild(taskElement);
+        newTaskInput.value = '';
+      }
+    });
+
+    // Handle checkbox toggle for existing tasks
+    document.querySelectorAll('ul li input[type="checkbox"]').forEach(cb => {
+      cb.addEventListener('change', () => {
+        cb.parentElement.classList.toggle('completed', cb.checked);
+      });
+    });
+  </script>
+</body>
+</html>
